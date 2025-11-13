@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Taiger Films</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="back-home" onclick="location='index.html'">⬅ Home</button>
+  <header class="page-header">🎬 Taiger Films — Neon Cinema</header>
+  <div id="grid" class="grid-cards"></div>
+  <div style="text-align:center;margin:14px"><button class="back-home" style="right:50%; transform:translateX(50%)" onclick="location='admin.html'">Admin Upload</button></div>
+  <script>
+const STORAGE_KEY = 'taiger_items_v2';
+function defaultData(){
+  return [
+    {id:1,category:'film',title:'Cyber World 2077',img:'https://i.ibb.co/r6Z8T0y/movie1.jpg',media:'#',desc:'Neon-soaked cyber thriller.'},
+    {id:2,category:'film',title:'Neon City Nights',img:'https://i.ibb.co/NYMZkS1/movie2.jpg',media:'#',desc:'Midnight heist in hologram city.'}
+  ];
+}
+function getItems(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){ localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData())); return defaultData(); }
+  try{ return JSON.parse(raw); }catch{ return defaultData(); }
+}
+function render(){
+  const grid = document.getElementById('grid'); grid.innerHTML='';
+  const films = getItems().filter(i=>i.category==='film');
+  if(films.length===0){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:.8">No films yet</div>'; return; }
+  films.forEach(f=>{
+    const d=document.createElement('div'); d.className='media-card';
+    d.innerHTML = `<img src="${f.img||'https://via.placeholder.com/640x360?text=Poster'}" style="width:100%;height:260px;object-fit:cover;border-radius:8px">
+      <h3 style="color:var(--neon1)">${escapeHtml(f.title)}</h3>
+      <p class="small">${escapeHtml(f.desc||'')}</p>
+      <div style="margin-top:8px"><button onclick="openMedia('${encodeURIComponent(f.media||'')}')" class="back-home">Watch</button></div>`;
+    grid.appendChild(d);
+  });
+}
+function openMedia(enc){ const url = decodeURIComponent(enc); if(!url||url==='#') return alert('No media link'); window.open(url,'_blank'); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+render();
+  </script>
+</body>
+</html>
