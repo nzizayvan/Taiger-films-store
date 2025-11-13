@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+:root{
+  --bg1:#05030a; --bg2:#1b003b; --neon1:#00f0ff; --neon2:#ff00e0; --glass: rgba(255,255,255,0.05);
+}
+*{box-sizing:border-box}
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+  color: #fff;
+  overflow-x: hidden;
+  animation: fadeIn 1.2s ease;
+}
+header {
+  text-align: center;
+  padding: 28px 0;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--neon1);
+  text-shadow: 0 0 15px rgba(0,240,255,0.12);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: transform .25s, box-shadow .25s;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+  font-size: 1.05rem;
+}
+.card:hover{ transform: translateY(-8px) scale(1.02); box-shadow: 0 12px 36px rgba(0,0,0,0.6); border-color: var(--neon2);}
+footer { text-align:center; padding:20px; opacity:0.8; margin-top:18px; }
+
+/* Back button */
+.back-home {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  background: linear-gradient(45deg, var(--neon1), var(--neon2));
+  color: #06111a;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* Generic card/list styles for pages */
+.page-header{ padding:22px 0; text-align:center; color:var(--neon2); font-size:1.6rem; }
+.grid-cards{ display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:18px; max-width:1100px; margin:0 auto; padding:20px; }
+.media-card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.04); transition: transform .25s; }
+.media-card:hover{ transform: translateY(-6px); }
+
+/* Admin form */
+.upload-form{ display:flex; flex-direction:column; gap:12px; width:100%; max-width:720px; margin:20px auto; background: rgba(255,255,255,0.02); padding:16px; border-radius:12px; }
+.upload-form input, .upload-form select, .upload-form button, .upload-form textarea { padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:inherit; outline:none; }
+.upload-form button { background: linear-gradient(90deg, var(--neon1), var(--neon2)); border:none; font-weight:800; cursor:pointer; }
+
+/* Chatbot */
+.taiger-chat-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  font-size: 2.2em;
+  cursor: pointer;
+  background: linear-gradient(45deg, var(--neon1), var(--neon2));
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 20px rgba(0,240,255,0.16);
+  transition: 0.25s;
+}
+.taiger-chat-btn:hover { transform: scale(1.12); }
+.taiger-chat-box {
+  display: none;
+  position: fixed;
+  bottom: 96px;
+  right: 28px;
+  width: 340px;
+  background: rgba(6,6,12,0.96);
+  border: 2px solid var(--neon1);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  overflow: hidden;
+  color: #c6ffff;
+}
+.taiger-chat-box.open { display:block; animation: fadeIn .3s ease; }
+.chat-header{ background: linear-gradient(90deg,var(--neon1),var(--neon2)); color:#001; padding:10px; text-align:center; font-weight:700; }
+.chat-messages{ height:260px; overflow:auto; padding:10px; font-size:0.95rem; line-height:1.4; }
+.chat-input{ display:flex; }
+.chat-input input{ flex:1; padding:10px; border:none; outline:none; background:transparent; color:inherit; }
+.chat-input button{ padding:10px; border:none; background:var(--neon2); color:#fff; cursor:pointer; }
+
+/* small helpers */
+.small{ font-size:0.9rem; opacity:0.85; }
+
+/* Animations */
+@keyframes fadeIn { from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+/* Responsive */
+@media (max-width:600px){
+  .grid{ padding:16px; grid-template-columns: 1fr 1fr; }
+  .taiger-chat-box{ width: 90%; right:5%; bottom:100px; }
+}
