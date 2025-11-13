@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Taiger Books</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="back-home" onclick="location='index.html'">⬅ Home</button>
+  <header class="page-header">📚 Taiger Books — eLibrary</header>
+  <div id="list" class="grid-cards"></div>
+  <script>
+const STORAGE_KEY='taiger_items_v2';
+function getItems(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch(e){return[]} }
+function render(){
+  const list=document.getElementById('list'); list.innerHTML='';
+  const books=getItems().filter(i=>i.category==='book');
+  if(books.length===0){ list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:.85">No books yet</div>'; return; }
+  books.forEach(b=>{
+    const c=document.createElement('div'); c.className='media-card';
+    c.innerHTML = `<img src="${b.img||'https://via.placeholder.com/480x640?text=Book'}" style="width:100%;height:280px;object-fit:cover;border-radius:8px">
+      <h3 style="color:var(--neon1)">${escape(b.title)}</h3>
+      <p class="small">${escape(b.desc||'')}</p>
+      <div style="margin-top:8px"><a class="back-home" href="${b.media||'#'}" target="_blank" rel="noopener">Download / Read</a></div>`;
+    list.appendChild(c);
+  });
+}
+function escape(s){ return (s||'').replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+render();
+  </script>
+</body>
+</html>
