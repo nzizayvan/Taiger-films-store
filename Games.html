@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Taiger Games</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="back-home" onclick="location='index.html'">⬅ Home</button>
+  <header class="page-header">🎮 Taiger Games — Play Demos</header>
+  <div id="grid" class="grid-cards"></div>
+  <script>
+const STORAGE_KEY='taiger_items_v2';
+function get(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch(e){return[]} }
+function render(){
+  const grid=document.getElementById('grid'); grid.innerHTML='';
+  const games=get().filter(x=>x.category==='game');
+  if(games.length===0){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:.8">No games yet</div>'; return; }
+  games.forEach(g=>{
+    const c=document.createElement('div'); c.className='media-card';
+    c.innerHTML = `<img src="${g.img||'https://via.placeholder.com/640x360?text=Game'}" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+      <h3 style="color:var(--neon1)">${escape(g.title)}</h3>
+      <p class="small">${escape(g.desc||'')}</p>
+      <div style="margin-top:8px"><button onclick="openGame('${encodeURIComponent(g.media||'')}')" class="back-home">Play / Download</button></div>`;
+    grid.appendChild(c);
+  });
+}
+function openGame(enc){ const url=decodeURIComponent(enc); if(!url) return alert('No link'); window.open(url,'_blank'); }
+function escape(s){ return (s||'').replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+render();
+  </script>
+</body>
+</html>
