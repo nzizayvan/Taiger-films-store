@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Upload | Taiger Store</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="back-home" onclick="location='index.html'">⬅ Home</button>
+  <header class="page-header">⚙️ Admin Upload — Taiger Store</header>
+
+  <form id="frm" class="upload-form" onsubmit="return saveItem(event)">
+    <label>Category</label>
+    <select id="category"><option value="film">Film</option><option value="music">Music</option><option value="game">Game</option><option value="book">Book</option></select>
+
+    <label>Title</label>
+    <input id="title" placeholder="Title" required />
+
+    <label>Image (URL or choose file)</label>
+    <input id="imgUrl" placeholder="https://..." />
+    <input id="imgFile" type="file" accept="image/*" />
+
+    <label>Media URL (mp3 / mp4 / pdf / game link) OR choose file</label>
+    <input id="mediaUrl" placeholder="https://..." />
+    <input id="mediaFile" type="file" />
+
+    <label>Description</label>
+    <textarea id="desc" placeholder="Short description"></textarea>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="back-home" type="button" onclick="seedDemo()">Seed Demo</button>
+      <button class="back-home" type="button" onclick="clearAll()">Clear All</button>
+      <button class="back-home" type="submit">Upload Item</button>
+    </div>
+  </form>
+
+  <div id="list" style="max-width:1100px;margin:18px auto"></div>
+
+<script>
+const KEY='taiger_items_v2';
+function idNow(){ return Date.now()+Math.floor(Math.random()*1000) }
+function get(){ try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]} }
+function set(v){ localStorage.setItem(KEY, JSON.stringify(v)) }
+
+async function saveItem(e){
+  e.preventDefault();
+  const category=document.getElementById('category').value;
+  const title=document.getElementById('title').value.trim();
+  const imgUrl=document.getElementById('imgUrl').value.trim();
+  const imgFile=document.getElementById('imgFile').files[0];
+  const mediaUrl=document.getElementById('mediaUrl').value.trim();
+  const mediaFile=document.getElementById('mediaFile').files[0];
+  const desc=document.getElementById('desc').value.trim();
+  if(!title){ alert('Title required'); return false; }
+
+  let img = imgUrl||'';
+  if(imgFile){
+    img = await fileToDataURL(imgFile);
+  }
+
+  let media = mediaUrl||'';
+  if(mediaFile){
+    media = await fileToDataURL(mediaFile);
+  }
+
+  const items = get();
+  items.unshift({ id:idNow(), category, title, img, media, desc });
+  set(items);
+  alert('Uploaded: ' + title);
+  document.getElementById('frm').reset();
+  renderList();
+  return false;
+}
+
+function fileToDataURL(file){
+  return new Promise((res, rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function renderList(){
+  const list=document.getElementById('list'); list.innerHTML='';
+  const items=get();
+  if(items.length===0){ list.innerHTML='<div style="padding:18px;text-align:center;opacity:.85">No items yet.</div>'; return; }
+  items.forEach(it=>{
+    const div=document.createElement('div'); div.className='media-card';
+    div.style.marginBottom='10px';
+    div.innerHTML = `<div style="display:flex;gap:12px;align-items:center">
+      <img src="${it.img||'https://via.placeholder.com/120x80?text=No+Image'}" style="width:120px;height:80px;object-fit:cover;border-radius:6px">
+      <div style="flex:1">
+        <div style="font-weight:700">${escape(it.title)} <span style="opacity:.7;font-size:.85rem">[${it.category}]</span></div>
+        <div class="small" style="margin-top:6px">${escape(it.desc||'')}</div>
+        <div style="margin-top:8px" class="small">Media: ${it.media?('Yes'):'No'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="openItem(${it.id})" class="back-home">Open</button>
+        <button onclick="deleteItem(${it.id})" class="back-home" style="background:linear-gradient(90deg,#ff5de0,#ff7b00)">Delete</button>
+      </div>
+    </div>`;
+    list.appendChild(div);
+  });
+}
+function openItem(id){ const it = get().find(x=>x.id===id); if(!it) return alert('Not found'); const map={'film':'films.html','music':'music.html','game':'games.html','book':'books.html'}; window.open((map[it.category]||'index.html')+'#id='+encodeURIComponent(it.id),'_blank'); }
+function deleteItem(id){ if(!confirm('Delete?')) return; let items=get(); items = items.filter(x=>x.id!==id); set(items); renderList(); }
+function seedDemo(){
+  const demo=[
+    {id:idNow(),category:'film',title:'Cyber World 2077',img:'https://i.ibb.co/r6Z8T0y/movie1.jpg',media:'#',desc:'Neon-soaked cyber thriller.'},
+    {id:idNow(),category:'music',title:'Neon Beats',img:'https://i.ibb.co/2K3Y2QV/cover1.jpg',media:'https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3',desc:'Synthwave banger.'},
+    {id:idNow(),category:'game',title:'Quantum Runner',img:'https://via.placeholder.com/640x360?text=Quantum+Runner',media:'#',desc:'Fast-paced neon runner.'},
+    {id:idNow(),category:'book',title:'Taiger Origins',img:'https://via.placeholder.com/480x640?text=Taiger+Origins',media:'#',desc:'Sci-fi novella.'}
+  ];
+  const items = demo.concat(get());
+  set(items);
+  renderList();
+  alert('Demo items added.');
+}
+function clearAll(){ if(!confirm('Clear all?')) return; localStorage.removeItem(KEY); renderList(); alert('Cleared'); }
+function escape(s){ return (s||'').replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+renderList();
+</script>
+</body>
+</html>
